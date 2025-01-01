@@ -5,21 +5,19 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import storage from 'redux-persist/lib/storage';
-
-// Exemple de reducers (à remplacer par vos reducers réels)
-const userReducer = (state = {}, action) => state; // Remplacez par votre reducer
-const projectReducer = (state = {}, action) => state; // Remplacez par votre reducer
+import user from '../reducers/user'; // Votre reducer utilisateur
 
 // Combine reducers
 const reducers = combineReducers({
-    user: userReducer,
-    project: projectReducer,
+    user: user,
+    // Ajoutez d'autres reducers ici si nécessaire
 });
 
 // Configurer redux-persist
 const persistConfig = {
     key: 'teamboard',
     storage,
+    whitelist: ['user'], // Persist uniquement l'état utilisateur
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
