@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
@@ -8,6 +8,7 @@ export default function ProjectDetails({ projectId, onBack, token }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const router = useRouter();
+    const addTaskRef = useRef(null); // Référence à la section d'ajout de tâche
 
     const fetchProjectDetails = async () => {
         try {
@@ -52,47 +53,91 @@ export default function ProjectDetails({ projectId, onBack, token }) {
         }
     };
 
+    const handleScrollToAddTask = () => {
+        // Scrolle jusqu'à la section d'ajout de tâche
+        addTaskRef.current.scrollIntoView({ behavior: 'smooth' });
+    };
+
     const handleBack = () => {
         router.push('/Start');
     };
 
-    if (loading) return <p>Chargement des détails du projet...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                <p className="text-lg font-semibold animate-pulse">Chargement des détails du projet...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                <p className="text-lg text-red-500">{error}</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6">
-            <button
-                onClick={handleBack}
-                className="mb-4 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition-colors"
-            >
-                Retour
-            </button>
-            <h1 className="text-4xl font-bold mb-4">{project.project}</h1>
-            <p className="text-gray-300 mb-4">{project.description}</p>
-            <p className="text-gray-400 mb-6">Utilisateurs : {project.users.join(', ')}</p>
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8">
+            <div className="flex items-center justify-between mb-6">
+                <button
+                    onClick={handleBack}
+                    className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg text-sm font-medium shadow-md transition-all"
+                >
+                    ← Retour
+                </button>
+                <div className="flex items-center space-x-4">
+                    <h1 className="text-3xl font-extrabold text-indigo-400 drop-shadow-md">
+                        {project.project}
+                    </h1>
+                    <button
+                        onClick={handleScrollToAddTask}
+                        className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 text-sm font-semibold rounded shadow-md transition-all"
+                    >
+                        Ajouter une tâche
+                    </button>
 
-            <h2 className="text-2xl font-semibold mb-4">Tâches</h2>
-            <ul className="space-y-4">
-                {project.notes.map((note) => (
-                    <li key={note.id} className="bg-gray-800 p-4 rounded shadow">
-                        <p className="text-gray-300">{note.content}</p>
-                        <p className="text-xs text-gray-500 mt-2">Ajouté par : {note.users}</p>
-                    </li>
-                ))}
-            </ul>
+                </div>
+            </div>
 
-            <div className="mt-6">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+                <p className="text-gray-300 mb-4 text-lg">{project.description}</p>
+                <p className="text-sm text-gray-500 mb-6">
+                    <strong>Utilisateurs : </strong>
+                    {project.users.join(', ')}
+                </p>
+
+                <h2 className="text-2xl font-semibold text-indigo-300 mb-4">Tâches</h2>
+                <ul className="space-y-4">
+                    {project.notes.map((note) => (
+                        <li
+                            key={note.id}
+                            className="bg-gray-900 p-4 rounded-lg shadow-md hover:bg-gray-700 transition-colors"
+                        >
+                            <p className="text-gray-300">{note.content}</p>
+                            <p className="text-xs text-gray-500 mt-2">
+                                Ajouté par : {note.users}
+                            </p>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* Section ajout de tâche */}
+            <div className="mt-8" ref={addTaskRef}>
                 <textarea
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
-                    className="w-full p-2 bg-gray-700 rounded text-white"
-                    placeholder="Ajouter une tâche..."
+                    className="w-full p-3 bg-gray-700 rounded-lg text-white resize-none shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    placeholder="Ajouter une nouvelle tâche..."
+                    rows="3"
                 ></textarea>
                 <button
                     onClick={handleAddTask}
-                    className="bg-indigo-600 text-white font-semibold py-2 px-4 rounded mt-2 hover:bg-indigo-700 transition-colors"
+                    className="mt-4 w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-lg"
                 >
-                    Ajouter
+                    Ajouter une tâche
                 </button>
             </div>
         </div>

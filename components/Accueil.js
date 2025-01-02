@@ -25,7 +25,8 @@ function Accueil() {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setProjects(response.data);
+                const allProjects = response.data;
+                setProjects(allProjects.slice(-3).reverse()); // Affiche les 3 derniers projets
             } catch (error) {
                 console.error('Error fetching projects:', error);
             }
@@ -35,7 +36,12 @@ function Accueil() {
 
     const handleProjectClick = (projectId) => {
         router.push(`/ProjectsDet?id=${projectId}`); // Envoie l'ID comme paramètre de requête
-    }
+    };
+
+    const handleMyProjectsClick = () => {
+        router.push('/Projects'); // Redirection vers la page Mes Projets
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
             <nav className="w-full bg-gray-900/80 backdrop-blur-md py-4 px-8 flex justify-between items-center shadow-md">
@@ -43,6 +49,11 @@ function Accueil() {
                     TeamBoard
                 </h1>
                 <div className="flex items-center space-x-6">
+                    <button
+                        onClick={handleMyProjectsClick}
+                        className="bg-gradient-to-r from-indigo-500 to-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:from-indigo-600 hover:to-indigo-800 focus:outline-none">
+                        Mes Projets
+                    </button>
                     <button
                         onClick={handleLogout}
                         className="bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 focus:outline-none">
@@ -57,7 +68,7 @@ function Accueil() {
                 </h1>
 
                 <section className="w-full max-w-5xl">
-                    <h2 className="text-3xl font-semibold mb-6 text-indigo-400">Projets récents</h2>
+                    <h2 className="text-3xl font-semibold mb-6 text-indigo-400">3 derniers projets</h2>
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {projects.map((project) => (
                             <li

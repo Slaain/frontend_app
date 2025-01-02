@@ -8,7 +8,7 @@ export default function ProjectsDet() {
     const { token } = useSelector((state) => state.user);
 
     if (!projectId) {
-        return <p>Chargement...</p>; // Attendez que l'ID soit disponible
+        return <p className="bg-black text-amber-100">Chargement...</p>; // Attendez que l'ID soit disponible
     }
 
     return (

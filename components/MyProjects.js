@@ -2,11 +2,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../reducers/user';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import {useRouter} from "next/router";
 
 function MyProjects() {
     const { token, username } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const [projects, setProjects] = useState([]);
+    const router= useRouter();
 
     const handleLogout = () => {
         dispatch(logout());
@@ -16,6 +18,9 @@ function MyProjects() {
     const handleNavigateToStart = () => {
         window.location.href = '/Start';
     };
+    const handleProjectsClick=(projectId)=>{
+        router.push(`/ProjectsDet?id=${projectId}`);
+    }
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -58,7 +63,9 @@ function MyProjects() {
                     <h2 className="text-3xl font-semibold mb-6 text-indigo-400">Mes projets </h2>
                     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {projects.map((project) => (
-                            <li key={project.id} className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                            <li key={project.id}
+                                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer"
+                                onClick={()=> handleProjectsClick(project.id)}>
                                 <h3 className="text-xl font-bold text-indigo-300 mb-2">{project.project}</h3>
                                 <p className="text-sm text-gray-300 mb-4">{project.description}</p>
                                 <p className="text-xs text-gray-500">Utilisateurs : {project.users.join(', ')}</p>
