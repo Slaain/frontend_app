@@ -16,8 +16,8 @@ function Home() {
                 username,
                 password,
             });
-            console.log("Connexion établie", response.data.token);
-            dispatch(login({ token: response.data.token, username })); // Utilise le username local
+            console.log("Connexion établie", response.data.token, response.data.roles);
+            dispatch(login({ token: response.data.token, username, roles: response.data.roles })); // Utilisation correcte des variables
             window.location.href = '/Start'; // Redirection après connexion
         } catch (error) {
             console.error('Login failed:', error);
